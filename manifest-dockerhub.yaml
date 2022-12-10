@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: dotnetcoreapp
+  name: dotnetcoreapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dotnetcoreapp
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: dotnetcoreapp
+    spec:
+      containers:
+      - image: docker.io/funknando/dotnetcoreapp:latest
+        name: dotnetcoreapp
+        imagePullPolicy: Always
+        resources: {}
+        ports:
+          - containerPort: 80
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: dotnetcoreapp 
+  labels:
+    app: dotnetcoreapp 
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 80
+    protocol: TCP
+  selector:
+    app: dotnetcoreapp

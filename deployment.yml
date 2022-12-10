@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: dotnetcoreapp
+  name: dotnetcoreapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dotnetcoreapp
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: dotnetcoreapp
+    spec:
+      containers:
+      - image: dotnetcoreapp:latest
+        name: dotnetcoreapp
+        imagePullPolicy: Never
+        resources: {}
+        ports:
+          - containerPort: 80
