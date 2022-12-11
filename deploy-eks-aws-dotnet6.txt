@@ -1,0 +1,59 @@
+
+1. Crear Cluster
+
+  eksctl create cluster --name test-cluster --without-nodegroup --region us-east-1 --zones us-east-1b,us-east-1a
+
+2. Crear Nodos del cluster
+
+  eksctl create nodegroup \
+    --cluster test-cluster \
+    --name test-workers \
+    --node-type t3.medium \
+    --nodes 1 \
+    --nodes-min 1 \
+    --nodes-max 3 \
+    --asg-access
+
+3. Crear Load balancer
+
+  curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.2/docs/install/iam_policy.json
+
+  aws iam create-policy \
+      --policy-name AWSLoadBalancerControllerIAMPolicy \
+      --policy-document file://iam_policy.json
+
+
+  //////CAMBIAR XXXXXXX POR CUENTA DE AWS//////
+
+  eksctl create iamserviceaccount \
+    --cluster=test-cluster \
+    --namespace=kube-system \
+    --name=aws-load-balancer-controller \
+    --role-name "AmazonEKSLoadBalancerControllerRole" \
+    --attach-policy-arn=arn:aws:iam::XXXXXX:policy/AWSLoadBalancerControllerIAMPolicy \
+    --approve
+
+  sudo snap install helm --classic
+
+  helm repo add eks https://aws.github.io/eks-charts
+
+  helm repo update
+
+  helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+    -n kube-system \
+    --set clusterName=test-cluster \
+    --set serviceAccount.create=false \
+    --set serviceAccount.name=aws-load-balancer-controller 
+    
+4. Desplegar app
+
+   kubectl apply -f deploy-eks-aws-dotnet.yaml
+
+5. Obtener URL publica
+
+  kubectl get ingress/ingress-dotnet -n deploy-dotnet
+
+
+6. Ver logs
+
+  kubectl logs -n kube-system deployment.apps/aws-load-balancer-controller

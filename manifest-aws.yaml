@@ -6,7 +6,7 @@ metadata:
     app: dotnetcoreapp
   name: dotnetcoreapp
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: dotnetcoreapp
@@ -18,9 +18,9 @@ spec:
         app: dotnetcoreapp
     spec:
       containers:
-      - image: dotnetcoreapp
+      - image: XXXXXX.dkr.ecr.us-east-1.amazonaws.com/dotnetcoreapp:latest
         name: dotnetcoreapp
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         resources: {}
         ports:
           - containerPort: 80
@@ -39,7 +39,7 @@ spec:
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 80
+    nodePort: 32000
     protocol: TCP
   selector:
     app: dotnetcoreapp
